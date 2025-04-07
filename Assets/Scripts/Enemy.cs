@@ -1,4 +1,7 @@
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
@@ -19,7 +22,20 @@ public class Enemy : MonoBehaviour
         Stand,
         Follow
     }
-    private State currentState = State.Stand;
+
+    private State currentState;
+
+    private void Awake()
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 3)
+        {
+            currentState = State.Follow;
+        }
+        else
+        {
+            currentState = State.Stand;
+        }
+    }
 
     private void Update()
     {
@@ -52,6 +68,7 @@ public class Enemy : MonoBehaviour
         if (attackCooldown <= 0)
         {
             player.GetComponent<Health>().TakeDamage(attackDamage);
+            HealthTracker.Instance.currentLoopHealth = player.GetComponent<Health>().GetCurrentHealth();
             attackCooldown = 0.7f;
         }
     }
@@ -93,15 +110,18 @@ public class Enemy : MonoBehaviour
         switch (option)
         {
             case 1:
-                int random = Random.Range(0, 4);
-                if (random == 1)
-                {
-                    goto case 3;
-                }
-                else
-                {
-                    Destroy(gameObject);
-                }
+                // int random = Random.Range(0, 4);
+                // if (random == 1)
+                // {
+                //     goto case 3;
+                // }
+                // else
+                // {
+                //     EnemyTracker.Instance.OnEnemyDeath(0);
+                //     Destroy(gameObject);
+                // }
+                EnemyTracker.Instance.OnEnemyDeath(0);
+                Destroy(gameObject);
                 break;
 
             case 2:
@@ -112,6 +132,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
+                    EnemyTracker.Instance.OnEnemyDeath(0);
                     Destroy(gameObject);
                 }
                 break;
